@@ -28,6 +28,17 @@ export default function UploadPage() {
     }
   }
 
+  async function getImageDimensions(file: File): Promise<{ width: number; height: number } | null> {
+    try {
+      const bitmap = await createImageBitmap(file);
+      const dims = { width: bitmap.width, height: bitmap.height };
+      bitmap.close();
+      return dims;
+    } catch {
+      return null; // corrupt file, unsupported format, etc - upload still proceeds without dims
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!files || files.length === 0) {
@@ -40,12 +51,14 @@ export default function UploadPage() {
     const manualYear = year.trim() ? parseInt(year.trim(), 10) : null;
     appendLog(`> reading dates for ${fileList.length} file(s)...`);
 
-    // 1. Work out the year for each file locally (EXIF -> filename -> manual -> unknown)
+    // 1. Work out the year and pixel dimensions for each file locally
+    //    (year: EXIF -> filename -> manual -> unknown; dims: read from the file itself)
     const resolved = await Promise.all(
       fileList.map(async (file) => {
         const exifDate = await extractExifDate(file);
         const result = resolveYearFromSignals(exifDate, file.name, manualYear);
-        return { file, ...result };
+        const dims = await getImageDimensions(file);
+        return { file, ...result, width: dims?.width ?? null, height: dims?.height ?? null };
       })
     );
 
@@ -78,7 +91,7 @@ export default function UploadPage() {
     let failed = 0;
 
     for (let i = 0; i < resolved.length; i++) {
-      const { file, year: fileYear, takenAt, source } = resolved[i];
+      const { file, year: fileYear, takenAt, source, width, height } = resolved[i];
       const slot = createData.results[i];
 
       if (!slot?.ok) {
@@ -106,6 +119,8 @@ export default function UploadPage() {
           year: fileYear,
           takenAt,
           source,
+          width,
+          height,
         }),
       });
 

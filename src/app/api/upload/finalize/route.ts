@@ -5,6 +5,10 @@ import { redis, PHOTOS_CACHE_KEY } from "@/lib/redis";
 
 export const runtime = "nodejs";
 
+function isPlausibleDimension(n: unknown): n is number {
+  return typeof n === "number" && Number.isFinite(n) && n > 0 && n < 20000;
+}
+
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-upload-secret");
   if (!secret || secret !== process.env.UPLOAD_SECRET) {
@@ -12,7 +16,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null);
-  const { path, originalFilename, year, takenAt, source } = body ?? {};
+  const { path, originalFilename, year, takenAt, source, width, height } = body ?? {};
 
   if (!path || typeof path !== "string") {
     return NextResponse.json({ error: "Missing 'path'" }, { status: 400 });
@@ -22,6 +26,8 @@ export async function POST(req: NextRequest) {
   const safeSource: YearSource = ["exif", "filename", "manual", "unknown"].includes(source)
     ? source
     : "unknown";
+  const safeWidth = isPlausibleDimension(width) ? width : null;
+  const safeHeight = isPlausibleDimension(height) ? height : null;
 
   const { data: publicUrlData } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(path);
 
@@ -32,6 +38,8 @@ export async function POST(req: NextRequest) {
     year: safeYear,
     taken_at: takenAt ?? null,
     source: safeSource,
+    width: safeWidth,
+    height: safeHeight,
   });
 
   if (error) {

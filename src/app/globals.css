@@ -165,6 +165,7 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 26px;
+  align-items: start; /* so shorter frames in a row don't stretch to match taller neighbors */
 }
 
 .photo-frame {
@@ -187,7 +188,28 @@ button {
   box-shadow: 2px 2px 0 var(--frame);
 }
 
+/* Default (intrinsic-dimensions) case: no fixed aspect-ratio here anymore.
+   The <Image width={} height={}> inside sizes itself, and this wrapper just
+   follows along so the container height matches the actual photo. */
 .photo-frame-media {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.photo-frame-img {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
+  filter: sepia(0.12) saturate(0.92) contrast(1.04);
+}
+
+/* Fallback case only: used when a photo has no stored width/height, so the
+   Image is still rendered with `fill` and needs a positioned ancestor with
+   an explicit ratio to size against. New uploads won't hit this. */
+.photo-frame-media-fallback {
   display: block;
   position: relative;
   width: 100%;
@@ -196,9 +218,9 @@ button {
   background: var(--paper-deep);
 }
 
-.photo-frame-img {
-  object-fit: contain;
-  filter: sepia(0.12) saturate(0.92) contrast(1.04);
+.photo-frame-media-fallback .photo-frame-img {
+  width: 100%;
+  height: 100%;
 }
 
 .timestamp {
