@@ -1,23 +1,28 @@
 /* ---------------------------------------------------------------
-   the photo box. — visual identity
-   Palette: sun-faded parchment + darkroom maroon + LCD-timestamp orange
-   Type: Georgia/Times serif body, Courier for anything "printed" by a machine
-   Signature element: the orange digital-camera timestamp burned into
-   the corner of every photo, the way point-and-shoots did it 2000-2008.
+   the photo box. — visual identity, v2
+   One flat parchment background for the whole page — no more
+   tiled-background-behind-a-floating-card layering.
+   Signature: bold flat-color tiles with a hard offset "sticker"
+   shadow (4px 4px 0), the way early-2000s portal sites (Cartoon
+   Network, Nick, etc.) built their nav/promo blocks — reinterpreted
+   here in a warm, sun-faded palette instead of primary colors.
+   The orange digital-camera timestamp on each photo carries over
+   from v1 as the other signature element.
 ----------------------------------------------------------------*/
 
 :root {
-  --bg-tile-a: #cdbfa0;
-  --bg-tile-b: #c1af8b;
-  --paper: #faf4e4;
-  --paper-dark: #efe4c8;
-  --ink: #2b2620;
+  --paper: #f2e6c8;       /* the ONE background color for the whole page */
+  --paper-deep: #e8d8ad;
+  --ink: #241f19;
   --ink-soft: #5c4f3e;
+  --black: #1c1712;       /* warm near-black, used like the CN top bar */
   --link: #0000cc;
   --link-visited: #660099;
-  --maroon: #6e2b2b;
-  --frame-light: #fffdf5;
-  --frame-shadow: #8b7355;
+  --rust: #b5502e;
+  --mustard: #c99a2e;
+  --teal: #2f6f6b;
+  --maroon: #7a2e2e;
+  --frame: #1c1712;       /* thick borders everywhere are this color */
   --timestamp: #ff9200;
 }
 
@@ -36,11 +41,12 @@ body {
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 16px;
   line-height: 1.5;
-  background-color: var(--bg-tile-a);
-  background-image:
-    repeating-linear-gradient(45deg, var(--bg-tile-b) 0, var(--bg-tile-b) 2px, transparent 2px, transparent 14px),
-    repeating-linear-gradient(-45deg, var(--bg-tile-b) 0, var(--bg-tile-b) 2px, transparent 2px, transparent 14px);
-  background-size: 28px 28px;
+  /* the single background: a flat warm parchment with a faint woven
+     grain, applied once, directly to <body> - nothing sits "on top"
+     of a second background anymore */
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--paper-deep) 1px, transparent 1px);
+  background-size: 10px 10px;
 }
 
 a {
@@ -50,61 +56,60 @@ a:visited {
   color: var(--link-visited);
 }
 
-.page-wrap {
-  padding: 28px 12px 60px;
-  display: flex;
-  justify-content: center;
+button {
+  font: inherit;
 }
 
-.container {
-  width: 100%;
-  max-width: 760px;
-  background: var(--paper);
-  border: 4px outset var(--frame-shadow);
-  padding: 22px 28px 34px;
-  box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.35);
-}
+/* ---------- top bar ---------- */
 
-/* ---------- header ---------- */
+.topbar {
+  background: var(--black);
+  padding: 22px 16px 18px;
+  text-align: center;
+  border-bottom: 5px solid var(--rust);
+}
 
 .site-title {
-  text-align: center;
-  font-size: 2.5rem;
+  color: #fff;
+  font-size: 2.4rem;
   letter-spacing: 1px;
-  margin: 6px 0 2px;
-  color: var(--maroon);
-  text-shadow: 2px 2px 0 var(--paper-dark), 3px 3px 0 var(--frame-shadow);
+  margin: 0;
+  text-shadow: 3px 3px 0 var(--rust);
 }
 
 .site-tagline {
-  text-align: center;
-  color: var(--ink-soft);
-  font-size: 0.95rem;
+  color: var(--mustard);
+  font-size: 0.85rem;
   font-style: italic;
-  margin: 0 0 14px;
+  margin: 8px 0 0;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+/* ---------- page content ---------- */
+
+.page-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
 }
 
 .hitcounter-row {
   text-align: center;
-  margin-bottom: 14px;
+  margin-bottom: 22px;
 }
 
 .hitcounter {
   display: inline-block;
-  background: #111;
+  background: var(--black);
   color: var(--timestamp);
   font-family: "Courier New", Courier, monospace;
   font-weight: bold;
   letter-spacing: 2px;
-  padding: 3px 10px;
-  border: 2px inset var(--frame-shadow);
+  padding: 4px 12px;
+  border: 3px solid var(--frame);
+  box-shadow: 4px 4px 0 var(--frame);
   font-size: 0.85rem;
-}
-
-hr.divider {
-  border: none;
-  border-top: 2px groove var(--frame-shadow);
-  margin: 16px 0;
 }
 
 /* ---------- year navigation tabs ---------- */
@@ -112,42 +117,52 @@ hr.divider {
 .year-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
   justify-content: center;
-  margin: 0 0 18px;
+  margin: 0 0 30px;
   padding: 0;
   list-style: none;
 }
 
 .year-tabs a {
   display: inline-block;
-  background: var(--paper-dark);
-  border: 2px outset var(--frame-shadow);
-  padding: 3px 10px;
-  font-size: 0.85rem;
+  border: 3px solid var(--frame);
+  box-shadow: 4px 4px 0 var(--frame);
+  padding: 6px 16px;
+  font-size: 0.95rem;
   text-decoration: none;
-  color: var(--maroon);
+  color: #fff;
   font-weight: bold;
+  transition: transform 0.08s ease;
 }
 
-.year-tabs a:hover {
-  border-style: inset;
+.year-tabs a:visited {
+  color: #fff;
 }
+
+.year-tabs a:hover,
+.year-tabs a:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--frame);
+}
+
+.tab-color-0 { background: var(--rust); }
+.tab-color-1 { background: var(--teal); }
+.tab-color-2 { background: var(--mustard); color: var(--ink) !important; }
+.tab-color-3 { background: var(--maroon); }
 
 /* ---------- year sections ---------- */
 
 .year-section {
-  margin-top: 34px;
+  margin-top: 44px;
   scroll-margin-top: 20px;
 }
 
 .year-heading {
   text-align: center;
-  color: var(--maroon);
-  font-size: 1.6rem;
-  border-bottom: 3px double var(--frame-shadow);
-  padding-bottom: 6px;
-  margin-bottom: 18px;
+  color: var(--ink);
+  font-size: 1.7rem;
+  margin-bottom: 22px;
   letter-spacing: 1px;
 }
 
@@ -155,7 +170,7 @@ hr.divider {
   display: block;
   font-size: 0.8rem;
   letter-spacing: 8px;
-  color: var(--frame-shadow);
+  color: var(--rust);
   margin-bottom: 4px;
 }
 
@@ -164,15 +179,27 @@ hr.divider {
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 22px;
+  gap: 26px;
 }
 
 .photo-frame {
   position: relative;
-  background: var(--frame-light);
-  border: 3px outset var(--frame-shadow);
+  display: block;
+  width: 100%;
+  background: #fffdf5;
+  border: 3px solid var(--frame);
+  box-shadow: 5px 5px 0 var(--frame);
   padding: 8px 8px 10px;
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.photo-frame:hover,
+.photo-frame:focus-visible {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--frame);
 }
 
 .photo-frame img {
@@ -194,14 +221,6 @@ hr.divider {
   pointer-events: none;
 }
 
-.photo-caption {
-  margin-top: 6px;
-  font-size: 0.75rem;
-  color: var(--ink-soft);
-  text-align: center;
-  word-break: break-word;
-}
-
 .empty-state {
   text-align: center;
   color: var(--ink-soft);
@@ -209,13 +228,124 @@ hr.divider {
   font-style: italic;
 }
 
+/* ---------- lightbox ---------- */
+
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 6, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+}
+
+.lightbox-shell {
+  position: relative;
+  max-width: 92vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lightbox-image {
+  max-width: 92vw;
+  max-height: 78vh;
+  display: block;
+  border: 4px solid #fff;
+  box-shadow: 8px 8px 0 var(--rust);
+  filter: sepia(0.1) saturate(0.94) contrast(1.03);
+}
+
+.lightbox-caption {
+  margin-top: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  color: var(--mustard);
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+}
+
+.lightbox-caption .timestamp {
+  position: static;
+  text-shadow: none;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: fixed;
+  background: var(--black);
+  color: #fff;
+  border: 3px solid #fff;
+  box-shadow: 4px 4px 0 var(--rust);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 101;
+}
+
+.lightbox-close {
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+}
+
+.lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  font-size: 1.8rem;
+}
+
+.lightbox-prev {
+  left: 12px;
+}
+.lightbox-next {
+  right: 12px;
+}
+
+.lightbox-close:active,
+.lightbox-nav:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--rust);
+}
+.lightbox-nav:active {
+  transform: translateY(-50%) translate(2px, 2px);
+}
+
+@media (max-width: 640px) {
+  .site-title {
+    font-size: 1.8rem;
+  }
+  .lightbox-nav {
+    width: 42px;
+    height: 42px;
+    font-size: 1.4rem;
+  }
+  .lightbox-close {
+    top: 12px;
+    right: 12px;
+  }
+  .lightbox-prev {
+    left: 6px;
+  }
+  .lightbox-next {
+    right: 6px;
+  }
+}
+
 /* ---------- footer ---------- */
 
 footer {
   text-align: center;
-  margin-top: 36px;
-  padding-top: 14px;
-  border-top: 2px groove var(--frame-shadow);
+  margin-top: 44px;
+  padding-top: 16px;
+  border-top: 3px solid var(--frame);
   font-size: 0.75rem;
   color: var(--ink-soft);
 }
@@ -232,13 +362,22 @@ footer {
   }
 }
 
-/* ---------- upload page (kept deliberately plain/utility) ---------- */
+/* ---------- upload page ---------- */
+
+.page-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 12px;
+}
 
 .upload-page {
   max-width: 480px;
   margin: 60px auto;
-  background: var(--paper);
-  border: 4px outset var(--frame-shadow);
+  background: #fffdf5;
+  border: 3px solid var(--frame);
+  box-shadow: 6px 6px 0 var(--frame);
   padding: 24px;
   font-family: Georgia, serif;
 }
@@ -259,21 +398,23 @@ footer {
   width: 100%;
   padding: 6px;
   margin: 6px 0 14px;
-  border: 2px inset var(--frame-shadow);
-  background: var(--frame-light);
+  border: 2px solid var(--frame);
+  background: #fff;
 }
 
 .upload-page button {
-  background: var(--paper-dark);
-  border: 2px outset var(--frame-shadow);
+  background: var(--mustard);
+  border: 2px solid var(--frame);
+  box-shadow: 4px 4px 0 var(--frame);
   padding: 8px 16px;
   cursor: pointer;
   font-weight: bold;
-  color: var(--maroon);
+  color: var(--ink);
 }
 
 .upload-page button:active {
-  border-style: inset;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--frame);
 }
 
 .upload-log {
