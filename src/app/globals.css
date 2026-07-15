@@ -1,28 +1,16 @@
-/* ---------------------------------------------------------------
-   the photo box. — visual identity, v2
-   One flat parchment background for the whole page — no more
-   tiled-background-behind-a-floating-card layering.
-   Signature: bold flat-color tiles with a hard offset "sticker"
-   shadow (4px 4px 0), the way early-2000s portal sites (Cartoon
-   Network, Nick, etc.) built their nav/promo blocks — reinterpreted
-   here in a warm, sun-faded palette instead of primary colors.
-   The orange digital-camera timestamp on each photo carries over
-   from v1 as the other signature element.
-----------------------------------------------------------------*/
-
 :root {
-  --paper: #f2e6c8;       /* the ONE background color for the whole page */
+  --paper: #f2e6c8;       
   --paper-deep: #e8d8ad;
   --ink: #241f19;
   --ink-soft: #5c4f3e;
-  --black: #1c1712;       /* warm near-black, used like the CN top bar */
+  --black: #1c1712;       
   --link: #0000cc;
   --link-visited: #660099;
   --rust: #b5502e;
   --mustard: #c99a2e;
   --teal: #2f6f6b;
   --maroon: #7a2e2e;
-  --frame: #1c1712;       /* thick borders everywhere are this color */
+  --frame: #1c1712;       
   --timestamp: #ff9200;
 }
 
@@ -41,9 +29,6 @@ body {
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 16px;
   line-height: 1.5;
-  /* the single background: a flat warm parchment with a faint woven
-     grain, applied once, directly to <body> - nothing sits "on top"
-     of a second background anymore */
   background-color: var(--paper);
   background-image: radial-gradient(var(--paper-deep) 1px, transparent 1px);
   background-size: 10px 10px;
