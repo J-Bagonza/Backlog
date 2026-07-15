@@ -6,8 +6,12 @@ export const revalidate = 30;
 
 async function getPhotos(): Promise<Photo[]> {
   if (redis) {
-    const cached = await redis.get<Photo[]>(PHOTOS_CACHE_KEY);
-    if (cached) return cached;
+    try {
+      const cached = await redis.get<Photo[]>(PHOTOS_CACHE_KEY);
+      if (cached) return cached;
+    } catch (err) {
+      console.warn("Redis read failed, falling back to Supabase:", (err as Error).message);
+    }
   }
 
   const { data, error } = await supabase
@@ -23,7 +27,11 @@ async function getPhotos(): Promise<Photo[]> {
 
   const photos = data ?? [];
   if (redis) {
-    await redis.set(PHOTOS_CACHE_KEY, photos, { ex: PHOTOS_CACHE_TTL_SECONDS });
+    try {
+      await redis.set(PHOTOS_CACHE_KEY, photos, { ex: PHOTOS_CACHE_TTL_SECONDS });
+    } catch (err) {
+      console.warn("Redis write failed (check that UPSTASH_REDIS_REST_TOKEN is the read-write token):", (err as Error).message);
+    }
   }
   return photos;
 }
@@ -61,7 +69,7 @@ export default async function HomePage() {
 
         <footer>
           <p>
-            best viewed at 800×600 &middot; <span className="blink">★ still under my construction ★</span>
+            best viewed at 800×600 &middot; <span className="blink">★ Still under my construction ★</span>
           </p>
           <p>this page does not use cookies, tracking pixels, or javascript frameworks you didn't ask for also i have to give credit to https://commons.wikimedia.org/ its where i go to pick these images these are just my personal best of what they have .</p>
         </footer>
