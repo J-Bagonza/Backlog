@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export type Photo = {
   id: string;
@@ -88,11 +89,16 @@ export default function Gallery({ photos }: { photos: Photo[] }) {
                   onClick={() => setOpenIndex(flatIndex)}
                   aria-label={`view ${photo.original_filename ?? "photo"} full size`}
                 >
-                  <img
-                    src={photo.public_url}
-                    alt={photo.original_filename ?? `photo from ${year}`}
-                    loading="lazy"
-                  />
+                  <span className="photo-frame-media">
+                    <Image
+                      src={photo.public_url}
+                      alt={photo.original_filename ?? `photo from ${year}`}
+                      fill
+                      sizes="(max-width: 640px) 45vw, 220px"
+                      quality={65}
+                      className="photo-frame-img"
+                    />
+                  </span>
                   <span className="timestamp">{formatTimestamp(photo)}</span>
                 </button>
               );

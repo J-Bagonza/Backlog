@@ -202,10 +202,17 @@ button {
   box-shadow: 2px 2px 0 var(--frame);
 }
 
-.photo-frame img {
+.photo-frame-media {
   display: block;
+  position: relative;
   width: 100%;
-  height: auto;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.photo-frame-img {
+  object-fit: cover;
   filter: sepia(0.12) saturate(0.92) contrast(1.04);
 }
 

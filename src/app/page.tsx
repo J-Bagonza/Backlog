@@ -1,9 +1,15 @@
 import { supabase } from "@/lib/supabase";
+import { redis, PHOTOS_CACHE_KEY, PHOTOS_CACHE_TTL_SECONDS } from "@/lib/redis";
 import Gallery, { Photo } from "@/components/Gallery";
 
 export const revalidate = 30;
 
 async function getPhotos(): Promise<Photo[]> {
+  if (redis) {
+    const cached = await redis.get<Photo[]>(PHOTOS_CACHE_KEY);
+    if (cached) return cached;
+  }
+
   const { data, error } = await supabase
     .from("photos")
     .select("id, public_url, year, taken_at, original_filename, source")
@@ -14,7 +20,12 @@ async function getPhotos(): Promise<Photo[]> {
     console.error("Failed to load photos:", error.message);
     return [];
   }
-  return data ?? [];
+
+  const photos = data ?? [];
+  if (redis) {
+    await redis.set(PHOTOS_CACHE_KEY, photos, { ex: PHOTOS_CACHE_TTL_SECONDS });
+  }
+  return photos;
 }
 
 async function getHitCount(): Promise<number | null> {
@@ -32,7 +43,7 @@ export default async function HomePage() {
   return (
     <>
       <div className="topbar">
-        <h1 className="site-title">BackRoll.</h1>
+        <h1 className="site-title">BackRoll</h1>
         <p className="site-tagline">
           {/* @ts-ignore -- marquee is an obsolete but still-rendered HTML element, used here on purpose */}
           <marquee scrollamount="3">tap any photo to view it full size. use the arrow keys to flip through.</marquee>
@@ -50,9 +61,9 @@ export default async function HomePage() {
 
         <footer>
           <p>
-            best viewed at 800×600 &middot; <span className="blink">★ under construction ★</span>
+            best viewed at 800×600 &middot; <span className="blink">★ still under my construction ★</span>
           </p>
-          <p>this page does not use cookies, tracking pixels, or javascript frameworks you didn't ask for.</p>
+          <p>this page does not use cookies, tracking pixels, or javascript frameworks you didn't ask for also i have to give credit to https://commons.wikimedia.org/ its where i go to pick these images these are just my personal best of what they have .</p>
         </footer>
       </div>
     </>

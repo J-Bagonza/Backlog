@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin, BUCKET } from "@/lib/supabaseAdmin";
 import { isPlausibleYear, YearSource } from "@/lib/dateFromPhoto";
+import { redis, PHOTOS_CACHE_KEY } from "@/lib/redis";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,10 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (redis) {
+    await redis.del(PHOTOS_CACHE_KEY);
   }
 
   return NextResponse.json({ ok: true, public_url: publicUrlData.publicUrl, year: safeYear });
