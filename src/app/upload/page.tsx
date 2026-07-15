@@ -51,7 +51,7 @@ export default function UploadPage() {
     const manualYear = year.trim() ? parseInt(year.trim(), 10) : null;
     appendLog(`> reading dates for ${fileList.length} file(s)...`);
 
-    // 1. Work out the year and pixel dimensions for each file locally
+    //  Work out the year and pixel dimensions for each file locally
     //    (year: EXIF -> filename -> manual -> unknown; dims: read from the file itself)
     const resolved = await Promise.all(
       fileList.map(async (file) => {
@@ -62,7 +62,7 @@ export default function UploadPage() {
       })
     );
 
-    // 2. Ask the server for a signed upload URL per file (small JSON request, no file bytes)
+    // Ask the server for a signed upload URL per file (small JSON request, no file bytes)
     appendLog("> requesting upload slots...");
     let createRes: Response;
     try {
@@ -86,7 +86,7 @@ export default function UploadPage() {
       return;
     }
 
-    // 3. Upload each file's bytes straight to Supabase Storage, then finalize its DB row
+    //  Upload each file's bytes straight to Supabase Storage, then finalize its DB row
     let ok = 0;
     let failed = 0;
 
