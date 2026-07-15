@@ -39,7 +39,11 @@ export async function POST(req: NextRequest) {
   }
 
   if (redis) {
-    await redis.del(PHOTOS_CACHE_KEY);
+    try {
+      await redis.del(PHOTOS_CACHE_KEY);
+    } catch (err) {
+      console.warn("Redis cache invalidation failed (check that UPSTASH_REDIS_REST_TOKEN is the read-write token):", (err as Error).message);
+    }
   }
 
   return NextResponse.json({ ok: true, public_url: publicUrlData.publicUrl, year: safeYear });

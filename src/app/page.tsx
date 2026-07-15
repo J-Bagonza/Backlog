@@ -69,7 +69,7 @@ export default async function HomePage() {
 
         <footer>
           <p>
-            best viewed at 800×600 &middot; <span className="blink">★ Still under my construction ★</span>
+            best viewed at 800×600 &middot; <span className="blink">★ Still under construction ★</span>
           </p>
           <p>this page does not use cookies, tracking pixels, or javascript frameworks you didn't ask for also i have to give credit to https://commons.wikimedia.org/ its where i go to pick these images these are just my personal best of what they have .</p>
         </footer>
