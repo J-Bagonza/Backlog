@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import exifr from "exifr";
+import { supabase } from "@/lib/supabase";
+import { resolveYearFromSignals } from "@/lib/dateFromPhoto";
+
+const BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || "photos";
 
 export default function UploadPage() {
   const [secret, setSecret] = useState("");
@@ -13,6 +18,16 @@ export default function UploadPage() {
     setLog((prev) => [...prev, line]);
   }
 
+  async function extractExifDate(file: File): Promise<Date | null> {
+    try {
+      const data = await exifr.parse(file, { pick: ["DateTimeOriginal", "CreateDate"] });
+      const raw = data?.DateTimeOriginal || data?.CreateDate;
+      return raw ? new Date(raw) : null;
+    } catch {
+      return null; // plenty of files (PNGs, screenshots, stripped metadata) have none - that's fine
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!files || files.length === 0) {
@@ -21,37 +36,92 @@ export default function UploadPage() {
     }
 
     setBusy(true);
-    appendLog(`> uploading ${files.length} file(s)...`);
+    const fileList = Array.from(files);
+    const manualYear = year.trim() ? parseInt(year.trim(), 10) : null;
+    appendLog(`> reading dates for ${fileList.length} file(s)...`);
 
-    const formData = new FormData();
-    Array.from(files).forEach((f) => formData.append("files", f));
-    if (year.trim()) formData.append("year", year.trim());
+    // 1. Work out the year for each file locally (EXIF -> filename -> manual -> unknown)
+    const resolved = await Promise.all(
+      fileList.map(async (file) => {
+        const exifDate = await extractExifDate(file);
+        const result = resolveYearFromSignals(exifDate, file.name, manualYear);
+        return { file, ...result };
+      })
+    );
 
+    // 2. Ask the server for a signed upload URL per file (small JSON request, no file bytes)
+    appendLog("> requesting upload slots...");
+    let createRes: Response;
     try {
-      const res = await fetch("/api/upload", {
+      createRes = await fetch("/api/upload/create-urls", {
         method: "POST",
-        headers: { "x-upload-secret": secret },
-        body: formData,
+        headers: { "Content-Type": "application/json", "x-upload-secret": secret },
+        body: JSON.stringify({
+          files: resolved.map((r) => ({ filename: r.file.name, year: r.year })),
+        }),
       });
-      const data = await res.json();
-
-      if (!res.ok) {
-        appendLog(`> error: ${data.error ?? res.statusText}`);
-      } else {
-        appendLog(`> done. uploaded ${data.uploaded}, failed ${data.failed}.`);
-        for (const r of data.results) {
-          if (r.ok) {
-            appendLog(`  ok  ${r.filename} -> ${r.year} (${r.source})`);
-          } else {
-            appendLog(`  fail ${r.filename}: ${r.error}`);
-          }
-        }
-      }
     } catch (err) {
       appendLog(`> network error: ${(err as Error).message}`);
-    } finally {
       setBusy(false);
+      return;
     }
+
+    const createData = await createRes.json().catch(() => null);
+    if (!createRes.ok || !createData?.results) {
+      appendLog(`> error: ${createData?.error ?? createRes.statusText}`);
+      setBusy(false);
+      return;
+    }
+
+    // 3. Upload each file's bytes straight to Supabase Storage, then finalize its DB row
+    let ok = 0;
+    let failed = 0;
+
+    for (let i = 0; i < resolved.length; i++) {
+      const { file, year: fileYear, takenAt, source } = resolved[i];
+      const slot = createData.results[i];
+
+      if (!slot?.ok) {
+        appendLog(`  fail ${file.name}: ${slot?.error ?? "no upload slot"}`);
+        failed++;
+        continue;
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .uploadToSignedUrl(slot.path, slot.token, file);
+
+      if (uploadError) {
+        appendLog(`  fail ${file.name}: ${uploadError.message}`);
+        failed++;
+        continue;
+      }
+
+      const finalizeRes = await fetch("/api/upload/finalize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-upload-secret": secret },
+        body: JSON.stringify({
+          path: slot.path,
+          originalFilename: file.name,
+          year: fileYear,
+          takenAt,
+          source,
+        }),
+      });
+
+      if (!finalizeRes.ok) {
+        const errData = await finalizeRes.json().catch(() => null);
+        appendLog(`  fail ${file.name}: uploaded but not saved (${errData?.error ?? finalizeRes.statusText})`);
+        failed++;
+        continue;
+      }
+
+      appendLog(`  ok  ${file.name} -> ${fileYear === 0 ? "unknown" : fileYear} (${source})`);
+      ok++;
+    }
+
+    appendLog(`> done. uploaded ${ok}, failed ${failed}.`);
+    setBusy(false);
   }
 
   return (
@@ -59,8 +129,8 @@ export default function UploadPage() {
       <div className="upload-page">
         <h1>upload photos</h1>
         <p style={{ fontSize: "0.8rem", color: "var(--ink-soft)" }}>
-          this page is just a thin wrapper around POST /api/upload. the site doesn't require
-          you to use it — curl or Postman work fine too.
+          files upload straight from your browser to storage, so batch size isn't limited by
+          Vercel's request size cap.
         </p>
 
         <form onSubmit={handleSubmit}>

@@ -58,7 +58,7 @@ export default async function HomePage() {
   return (
     <div className="page-wrap">
       <div className="container">
-        <h1 className="site-title">Backroll</h1>
+        <h1 className="site-title">the photo box.</h1>
         <p className="site-tagline">
           {/* @ts-ignore -- marquee is an obsolete but still-rendered HTML element, used here on purpose */}
           <marquee scrollamount="3">a small archive of old pictures, kept exactly as they were.</marquee>
@@ -84,7 +84,7 @@ export default async function HomePage() {
 
         {years.length === 0 && (
           <p className="empty-state">
-            
+            nothing here yet — upload some photos and they'll show up, sorted by year, automatically.
           </p>
         )}
 

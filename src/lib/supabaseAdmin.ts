@@ -11,4 +11,4 @@ export const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },
 });
 
-export const BUCKET = process.env.SUPABASE_BUCKET || "photos";
+export const BUCKET = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || "photos";
