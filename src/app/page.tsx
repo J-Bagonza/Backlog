@@ -32,7 +32,7 @@ export default async function HomePage() {
   return (
     <>
       <div className="topbar">
-        <h1 className="site-title">the photo box.</h1>
+        <h1 className="site-title">BackRoll.</h1>
         <p className="site-tagline">
           {/* @ts-ignore -- marquee is an obsolete but still-rendered HTML element, used here on purpose */}
           <marquee scrollamount="3">tap any photo to view it full size. use the arrow keys to flip through.</marquee>
