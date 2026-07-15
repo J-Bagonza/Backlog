@@ -1,0 +1,289 @@
+/* ---------------------------------------------------------------
+   the photo box. — visual identity
+   Palette: sun-faded parchment + darkroom maroon + LCD-timestamp orange
+   Type: Georgia/Times serif body, Courier for anything "printed" by a machine
+   Signature element: the orange digital-camera timestamp burned into
+   the corner of every photo, the way point-and-shoots did it 2000-2008.
+----------------------------------------------------------------*/
+
+:root {
+  --bg-tile-a: #cdbfa0;
+  --bg-tile-b: #c1af8b;
+  --paper: #faf4e4;
+  --paper-dark: #efe4c8;
+  --ink: #2b2620;
+  --ink-soft: #5c4f3e;
+  --link: #0000cc;
+  --link-visited: #660099;
+  --maroon: #6e2b2b;
+  --frame-light: #fffdf5;
+  --frame-shadow: #8b7355;
+  --timestamp: #ff9200;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: var(--bg-tile-a);
+  background-image:
+    repeating-linear-gradient(45deg, var(--bg-tile-b) 0, var(--bg-tile-b) 2px, transparent 2px, transparent 14px),
+    repeating-linear-gradient(-45deg, var(--bg-tile-b) 0, var(--bg-tile-b) 2px, transparent 2px, transparent 14px);
+  background-size: 28px 28px;
+}
+
+a {
+  color: var(--link);
+}
+a:visited {
+  color: var(--link-visited);
+}
+
+.page-wrap {
+  padding: 28px 12px 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 760px;
+  background: var(--paper);
+  border: 4px outset var(--frame-shadow);
+  padding: 22px 28px 34px;
+  box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- header ---------- */
+
+.site-title {
+  text-align: center;
+  font-size: 2.5rem;
+  letter-spacing: 1px;
+  margin: 6px 0 2px;
+  color: var(--maroon);
+  text-shadow: 2px 2px 0 var(--paper-dark), 3px 3px 0 var(--frame-shadow);
+}
+
+.site-tagline {
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-style: italic;
+  margin: 0 0 14px;
+}
+
+.hitcounter-row {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.hitcounter {
+  display: inline-block;
+  background: #111;
+  color: var(--timestamp);
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 3px 10px;
+  border: 2px inset var(--frame-shadow);
+  font-size: 0.85rem;
+}
+
+hr.divider {
+  border: none;
+  border-top: 2px groove var(--frame-shadow);
+  margin: 16px 0;
+}
+
+/* ---------- year navigation tabs ---------- */
+
+.year-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.year-tabs a {
+  display: inline-block;
+  background: var(--paper-dark);
+  border: 2px outset var(--frame-shadow);
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--maroon);
+  font-weight: bold;
+}
+
+.year-tabs a:hover {
+  border-style: inset;
+}
+
+/* ---------- year sections ---------- */
+
+.year-section {
+  margin-top: 34px;
+  scroll-margin-top: 20px;
+}
+
+.year-heading {
+  text-align: center;
+  color: var(--maroon);
+  font-size: 1.6rem;
+  border-bottom: 3px double var(--frame-shadow);
+  padding-bottom: 6px;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+}
+
+.year-heading .stars {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 8px;
+  color: var(--frame-shadow);
+  margin-bottom: 4px;
+}
+
+/* ---------- photo grid ---------- */
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 22px;
+}
+
+.photo-frame {
+  position: relative;
+  background: var(--frame-light);
+  border: 3px outset var(--frame-shadow);
+  padding: 8px 8px 10px;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.photo-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: sepia(0.12) saturate(0.92) contrast(1.04);
+}
+
+.timestamp {
+  position: absolute;
+  bottom: 18px;
+  right: 16px;
+  font-family: "Courier New", Courier, monospace;
+  font-style: italic;
+  font-size: 0.72rem;
+  color: var(--timestamp);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.photo-caption {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  text-align: center;
+  word-break: break-word;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 40px 0;
+  font-style: italic;
+}
+
+/* ---------- footer ---------- */
+
+footer {
+  text-align: center;
+  margin-top: 36px;
+  padding-top: 14px;
+  border-top: 2px groove var(--frame-shadow);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.blink {
+  animation: blink 1.1s steps(1) infinite;
+  color: var(--maroon);
+  font-weight: bold;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- upload page (kept deliberately plain/utility) ---------- */
+
+.upload-page {
+  max-width: 480px;
+  margin: 60px auto;
+  background: var(--paper);
+  border: 4px outset var(--frame-shadow);
+  padding: 24px;
+  font-family: Georgia, serif;
+}
+
+.upload-page h1 {
+  color: var(--maroon);
+  font-size: 1.4rem;
+}
+
+.upload-page input,
+.upload-page button {
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.upload-page input[type="password"],
+.upload-page input[type="number"] {
+  width: 100%;
+  padding: 6px;
+  margin: 6px 0 14px;
+  border: 2px inset var(--frame-shadow);
+  background: var(--frame-light);
+}
+
+.upload-page button {
+  background: var(--paper-dark);
+  border: 2px outset var(--frame-shadow);
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--maroon);
+}
+
+.upload-page button:active {
+  border-style: inset;
+}
+
+.upload-log {
+  margin-top: 16px;
+  background: #111;
+  color: #7CFC00;
+  font-family: "Courier New", monospace;
+  font-size: 0.75rem;
+  padding: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
