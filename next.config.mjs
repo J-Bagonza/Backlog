@@ -7,6 +7,7 @@ const nextConfig = {
         hostname: "*.supabase.co",
       },
     ],
+    qualities: [75, 90],
   },
 };
 
