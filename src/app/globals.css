@@ -197,7 +197,7 @@ button {
 }
 
 .photo-frame-img {
-  object-fit: cover;
+  object-fit: contain;
   filter: sepia(0.12) saturate(0.92) contrast(1.04);
 }
 
