@@ -95,7 +95,7 @@ export default function Gallery({ photos }: { photos: Photo[] }) {
                       alt={photo.original_filename ?? `photo from ${year}`}
                       fill
                       sizes="(max-width: 640px) 45vw, 220px"
-                      quality={65}
+                      quality={90}
                       className="photo-frame-img"
                     />
                   </span>
