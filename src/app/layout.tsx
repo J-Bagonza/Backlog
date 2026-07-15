@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+// @ts-ignore: side-effect CSS import declaration may be missing in this environment
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "the photo box.",
+  title: "BackRoll",
   description: "old pictures, kept exactly as they were.",
 };
 
