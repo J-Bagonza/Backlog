@@ -10,8 +10,6 @@ export type Photo = {
   taken_at: string | null;
   original_filename: string | null;
   source: string;
-  width: number | null;
-  height: number | null;
 };
 
 function formatTimestamp(photo: Photo) {
@@ -83,7 +81,6 @@ export default function Gallery({ photos }: { photos: Photo[] }) {
           <div className="photo-grid">
             {byYear.get(year)!.map((photo) => {
               const flatIndex = photos.findIndex((p) => p.id === photo.id);
-              const hasDims = !!photo.width && !!photo.height;
               return (
                 <button
                   type="button"
@@ -93,32 +90,14 @@ export default function Gallery({ photos }: { photos: Photo[] }) {
                   aria-label={`view ${photo.original_filename ?? "photo"} full size`}
                 >
                   <span className="photo-frame-media">
-                    {hasDims ? (
-                      // Real dimensions on record: size the box from the image's
-                      // own aspect ratio instead of forcing a fixed-height crop.
-                      <Image
-                        src={photo.public_url}
-                        alt={photo.original_filename ?? `photo from ${year}`}
-                        width={photo.width!}
-                        height={photo.height!}
-                        sizes="(max-width: 437px) 100vw, (max-width: 653px) 50vw, (max-width: 869px) 33vw, 220px"
-                        quality={90}
-                        className="photo-frame-img"
-                      />
-                    ) : (
-                      // Fallback for older rows uploaded before width/height
-                      // were tracked. Backfill these to drop this branch.
-                      <span className="photo-frame-media-fallback">
-                        <Image
-                          src={photo.public_url}
-                          alt={photo.original_filename ?? `photo from ${year}`}
-                          fill
-                          sizes="(max-width: 437px) 100vw, (max-width: 653px) 50vw, (max-width: 869px) 33vw, 220px"
-                          quality={90}
-                          className="photo-frame-img"
-                        />
-                      </span>
-                    )}
+                    <Image
+                      src={photo.public_url}
+                      alt={photo.original_filename ?? `photo from ${year}`}
+                      fill
+                      sizes="(max-width: 437px) 100vw, (max-width: 653px) 50vw, (max-width: 869px) 33vw, 220px"
+                      quality={90}
+                      className="photo-frame-img"
+                    />
                   </span>
                   <span className="timestamp">{formatTimestamp(photo)}</span>
                 </button>

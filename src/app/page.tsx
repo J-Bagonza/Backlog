@@ -15,10 +15,10 @@ async function getPhotos(): Promise<Photo[]> {
   }
 
   const { data, error } = await supabase
-  .from("photos")
-  .select("id, public_url, year, taken_at, original_filename, source, width, height")
-  .order("year", { ascending: true })
-  .order("taken_at", { ascending: true, nullsFirst: true });
+    .from("photos")
+    .select("id, public_url, year, taken_at, original_filename, source")
+    .order("year", { ascending: true })
+    .order("taken_at", { ascending: true, nullsFirst: true });
 
   if (error) {
     console.error("Failed to load photos:", error.message);
